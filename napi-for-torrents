@@ -1,0 +1,24 @@
+#!/bin/bash
+
+OPTS="-n username:password"
+DIR1="/path/to/downloads"
+DIR2="/path/to/incomplete"
+
+function cli() {
+    transmission-remote $OPTS "$@"
+}
+
+function list_torrents() {
+    cli -l | grep 'Seeding\|Downloading' | awk '{print $1}'
+}
+
+function list_complete_files() {
+    cli -t "$1" -if | tail -n +3 | grep 100% | sed 's/^.*\?[0-9] .B \+//'
+}
+
+for id in `list_torrents`; do
+    list_complete_files "$id" | while read file; do
+        [ -f "$DIR1/$file" ] && napiprojekt.py "$DIR1/$file"
+        [ -f "$DIR2/$file" ] && napiprojekt.py "$DIR2/$file"
+    done
+done

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+MAC=00:11:22:33:44:55
+
+ls /dev/input/mouse0 || exit
+
+while : ; do
+    dd if=/dev/input/mouse0 count=1 bs=1 |
+        hexdump | grep -q '0000000....[a9]' &&
+            wakeonlan "$MAC"
+done 2>/dev/null
