@@ -9,7 +9,7 @@ function cli() {
 }
 
 function list_torrents() {
-    cli -l | grep 'Seeding\|Downloading\|Finished' | awk '{print $1}'
+    cli -l | awk '{print $1}'
 }
 
 function list_complete_files() {
